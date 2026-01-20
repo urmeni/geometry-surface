@@ -97,9 +97,15 @@ public:
 		// Calcul de la première forme fondamentale
 		Eigen::MatrixXd A(2,2) ;
 		double E, F, G ;
-		// TODO : définir E, F, G
-        F = 1.;
-        G = 1.;
+
+		// Récupération des pentes à l'origine a3 et a4
+		double a3 = _coefs[3] ;
+		double a4 = _coefs[4] ;
+
+		// Application de la formule : E = 1 + a3^2 ; F = a3*a4 ; G = 1 + a4^2
+		E = 1. + a3*a3 ;
+        F = a3*a4 ;
+        G = 1. + a4*a4 ;
         
 		A << E, F,
 			 F,G ;
@@ -111,13 +117,26 @@ public:
 		// Calcul de la deuxième forme fondamentale
 		Eigen::MatrixXd A(2,2) ;
 		double g, l, m, n ;
-        // TODO : définir l, m, n, g
-        l = 1.;
-        n = 1.;
-        
-        g = 1.;
+
+		// Récupération des coefficients quadratiques a0, a1, a2 ... a4
+		double a0 = _coefs[0] ;
+		double a1 = _coefs[1] ;
+		double a2 = _coefs[2] ;
+		double a3 = _coefs[3] ;
+		double a4 = _coefs[4] ;
+
+		// Calcul des numérateurs (dérivés secondes)
+		l = 2.*a0; // dérivée seconde en u
+		m = a1; // dérivée croisée uv
+		n = 2.*a2; // dérivée seconde en v
+
+		// Caclul du facteur de normalisation (norme du gradient)
+		g = std::sqrt(1.0 + a3*a3 + a4*a4);
+
 		A << l, m,
 			 m,n ;
+
+		// Projection sur la normale unitaire
 		A /= g ;
 		return A ;
 	}
